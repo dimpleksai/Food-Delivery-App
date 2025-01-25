@@ -39,6 +39,7 @@ const Add = () => {
       });
 
       setImage(false);
+
       toast.success(response.data.message);
     } else {
       toast.error(response.data.message);
@@ -57,7 +58,7 @@ const Add = () => {
             />
           </label>
           <input
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={(e) => setImage(e.target.files[0] || false)}
             type="file"
             name="image"
             id=""
