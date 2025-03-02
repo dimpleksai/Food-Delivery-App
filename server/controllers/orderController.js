@@ -43,7 +43,6 @@ const placeOrder = async (req, res) => {
       },
       quantity: 1,
     });
-    console.log("here before url created");
 
     const session = await stripe.checkout.sessions.create({
       line_items: line_items,
@@ -51,8 +50,6 @@ const placeOrder = async (req, res) => {
       success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
       cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
     });
-    console.log("here after url created");
-    console.log(session.url);
     res.json({ success: true, session_url: session.url });
   } catch (error) {
     console.log(error);
@@ -64,7 +61,6 @@ const placeOrder = async (req, res) => {
 
 const verifyOrder = async (req, res) => {
   const { orderId, success } = req.body;
-  console.log("orderId : " + orderId);
   try {
     if (success == "true") {
       await orderModel.findByIdAndUpdate(orderId, { payment: true });
@@ -79,4 +75,15 @@ const verifyOrder = async (req, res) => {
   }
 };
 
-export { placeOrder, verifyOrder };
+//user orders
+const userOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ userId: req.body.userId });
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "error" });
+  }
+};
+
+export { placeOrder, verifyOrder, userOrders };
